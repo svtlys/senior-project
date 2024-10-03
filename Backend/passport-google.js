@@ -9,7 +9,7 @@ const Google_Client_Secret = process.env.GOOGLE_CLIENT_SECRET;
 passport.use(new GoogleStrategy({ //use googel strategy, with the provided Google-Client-ID and secret
     clientID: Google_CLient_ID,    // These are contained within the .env file, and are held in my own email
     clientSecret: Google_Client_Secret,
-    callbackURL: "http://localhost:5000/google/callback" //callback url. 
+    callbackURL: "http://localhost:5000/auth/google/callback" //callback url. 
   },
   function(accessToken, refreshToken, profile, cb) {
    // User.findOrCreate({ googleId: profile.id }, function (err, user) { // We need a database set up to actually search for and add the user authetnicated from google.

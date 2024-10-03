@@ -12,10 +12,10 @@ const LoginPage = () =>{
 
          <div className = "wrapAround">
             <div className="leftSide">
-                <div className = "loginButton google" onClick={google}>
+                <button className = "loginButton google" onClick={google}>
                     <img src = {google} alt =" " className ="icon"></img>
                      Sign in with Google
-                </div>
+                </button>
 
 
             </div>

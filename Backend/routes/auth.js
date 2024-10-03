@@ -5,34 +5,62 @@ const FRONTEND_URL = "http://localhost:3000/";
 
 // Get method for google
 
-router.get("/login/failed" , (req,res) =>{
+
+// Middleware checks if user is Logged in
+function isLoggedIN(req, res,next) {
+  //checks if logged in, sends 401 status if not
+  req.user ? next() : res.sendStatus(401);
+}
+
+//get route for Google Auth
+// scope of request from google; email and profile
+
+router.get("/google", passport.authenticate("google", {scope: ['email', 'profile'] })
+);
+
+//callback route; authentication check, redirects to path on success or fail
+router.get('/google/callback', passport.authenticate("google", { 
+  failureRedirect: "/auth/login/failed", // redirect to failure handler
+  successRedirect: FRONTEND_URL // redirect to flowban route
+})); 
+
+
+
+// failure handler for google oAuth
+router.get("/login/failed" , (req, res) =>{
   res.status(401).json({
     success: false,
     message: "failure to login",
   });
 });
  
-router.get("/google", passport.authenticate("google", {scope: ['email','profile']}));
-
-router.get("/google/callback", passport.authenticate('google',{
-    successRedirect:FRONTEND_URL, //Success, redirect
-    failureRedirect: "/login/failed"
-}))
-
+// success handler for google oAuth
 router.get("/login/success", (req,res) => {
   if(req.user){
     res.status(200).json({
         success:true,
-        message: "login successfull",
+        message: "Login successful",
         user: req.user,
-        
+      });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "unauthorized user",
     });
   }
 });
 
-router.get("/logout", (req,res)=> {
-    req.logout();
-    res.redirect(FRONTEND_URL);
+
+// logout route
+
+router.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) { 
+      return next(err);  // handles logout errors
+    }
+    req.session.destroy();  // destroys session
+    res.redirect(FRONTEND_URL);  // redirect back to frontend after logout
+  });
 });
 
 module.exports = router;

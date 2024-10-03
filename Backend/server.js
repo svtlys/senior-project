@@ -3,33 +3,39 @@ const session = require('express-session'); // express session
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const cors = require('cors');
-dotenv.config();
 const connect_ensure_login = require('connect-ensure-login') // authorization, so we can make routes only work for logged-in users
 const flash = require('connect-flash'); // flash, this seems like to be used for messaging
 const passport = require('passport');
 const passport_google = require('./passport-google.js');
 const auth_routes = require('./routes/auth.js');
 
+dotenv.config();
+
 
  // require('./routes/auth'); //load in auth.js in here
-
 const app = express();
-
 const sessionSecret = process.env.SESSION_SECRET;
 
 //should re-do
 
-app.use(session({secret: sessionSecret}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash()); // flash messaging, 
-
+app.use(express.json()); //parses incoming JSON requests
 app.use(cors({
-    origin:"http://localhost:3000",
-    methods:"GET,POST,PUT,DELETE",
-    credentials: true, //send session through client server requests
-
+  origin: "http://localhost:3000",
+  methods: "GET, POST, PUT, DELETE",
+  credentials: true //  allow sending session cookies with request
 }));
+
+app.use(session({
+  secret: sessionSecret,  // Used to sign the session ID cookie
+  resave: false,  // Prevents saving the session back to the store if not modified
+  saveUninitialized: false,  // Prevents saving uninitialized sessions
+  cookie: {
+    httpOnly: true,  // Protects the cookie from being accessed by client-side scripts
+    secure: process.env.NODE_ENV === 'production',  // Set `secure` to true only in production for HTTPS
+    sameSite: 'lax'  // Helps prevent CSRF attacks
+  }
+}));
+
 
 app.use("/auth", auth_routes);
 
