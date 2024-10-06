@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const passport = require("passport");
 
-const FRONTEND_URL = "http://localhost:3000/";
+const FRONTEND_URL = "http://localhost:3000/home";
 
 // Get method for google
 
@@ -53,7 +53,7 @@ router.get("/login/success", (req,res) => {
 
 // logout route
 
-router.get("/logout", (req, res, next) => {
+router.post("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) { 
       return next(err);  // handles logout errors

@@ -16,7 +16,6 @@ dotenv.config();
 const app = express();
 const sessionSecret = process.env.SESSION_SECRET;
 
-//should re-do
 
 app.use(express.json()); //parses incoming JSON requests
 app.use(cors({
@@ -59,11 +58,6 @@ db.getConnection((err, connection) => {
   connection.release();
 })
 
-
-
-function isLoggedIn(req, res, next){ //Checks if logged, response sends a 401 staus if not, 
-  req.user ? next() : res.sendStatus(401);
-}
 
 /* 10/01/2024
    
@@ -114,5 +108,6 @@ app.get('/logout', (req,res) => {
 
 */
 
+
 const PORT = process.env.PORT || 5000; //Port used
-app.listen(PORT, () => console.log('Listening on port ' + PORT));
+app.listen(PORT,'130.166.160.32', () => console.log('Listening on port ' + PORT));
